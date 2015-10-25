@@ -2,18 +2,20 @@
 
 ## **Introduction**
 
+Backup is a Laravel package that allow the creation and restoration of database backups in an easy way.
+
 ## **Quick Installation**
 
 Begin by installing this package through Composer.
 
 You can run:
 
-    composer require paulvl/backup
+    composer require paulvl/backup 1.*
 
-Or edit your project's composer.json file to require paulvl/json-api.
+Or edit your project's composer.json file to require paulvl/backup.
 ```
     "require-dev": {
-        "paulvl/backup": "^1.0"
+        "paulvl/backup": "1.*"
     }
 ```
 Next, update Composer from the Terminal:
@@ -68,4 +70,3 @@ protected function schedule(Schedule $schedule)
 ```
 ## **Contribute and share ;-)**
 If you like this little piece of code share it with you friends and feel free to contribute with any improvements.
-
