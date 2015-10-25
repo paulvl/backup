@@ -1,0 +1,21 @@
+{
+    "name": "paulvl/backup",
+    "description": "Database backup package for laravel 5.1",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Paul Vidal",
+            "email": "paul.vidal.lujan@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.5.9",
+        "laravel/framework": "5.1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Backup\\": "src/"
+        }
+    }
+}
