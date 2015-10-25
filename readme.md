@@ -62,7 +62,7 @@ If you need to perform a backup for example, every day at midnight, at this like
 protected function schedule(Schedule $schedule)
 {
 ...
-    $schedule->command('backup:mysql-dump')->dailyAt('13:00');
+    $schedule->command('backup:mysql-dump')->dailyAt('00:00');
 ...
 }
 ```
