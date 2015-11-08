@@ -14,13 +14,13 @@ You can run:
 
 Or edit your project's composer.json file to require paulvl/backup.
 ```
-    "require-dev": {
+    "require": {
         "paulvl/backup": "1.*"
     }
 ```
 Next, update Composer from the Terminal:
 
-    composer update --dev
+    composer update
 
 Once the package's installation completes, the final step is to add the service provider. Open `config/app.php`, and add a new item to the providers array:
 
