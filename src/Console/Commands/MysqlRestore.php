@@ -33,10 +33,10 @@ class MysqlRestore extends Command
         $username   = env('DB_USERNAME');
         $password   = env('DB_PASSWORD');
 
-        $path       = config('backup.mysql.path');
-        $filename = $this->argument('filename');
+        $backupPath = config('backup.mysql.path');
+        $filename   = $this->argument('filename');
 
-        $restoreCommand = "mysql -u $username -p$password $database < /home/paulvl/Backups/$filename.sql";
+        $restoreCommand = "mysql -u $username -p$password $database < $backupPath$filename";
         exec($restoreCommand);
         $this->info('Restore completed!');
     }
