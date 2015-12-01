@@ -30,7 +30,7 @@ Backup\BackupServiceProvider::class,
 
 Finally publish package's configuration file:
 
-    php artisan vendor:publish
+    php artisan vendor:publish --provider="Backup\BackupServiceProvider"
 
 Then the file `config/backup.php` will be created.
 
