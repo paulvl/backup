@@ -1,4 +1,6 @@
-# Backup
+## Backup
+
+[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/paulvl/backup)
 
 ## **Introduction**
 
@@ -43,7 +45,7 @@ That's it! You're all set to go. Run the artisan command from the Terminal to se
 ### **Creating a backup**
 To make a backup of you current aplicationa database you have to run:
 
-    php artisan backup:mysq-dump
+    php artisan backup:mysql-dump
 
 This will create an `.sql` file on your configured path like `/this/is/my/path/dbname_20150101201505.sql`, this file is named using current datetime. If you want a custom name run:
 
@@ -52,7 +54,7 @@ This will create an `.sql` file on your configured path like `/this/is/my/path/d
 This will create an `.sql` file on your configured path like `/this/is/my/path/example.sql`
 
 ### **Restoring database from file**
-To restore a backup to your current aplicationa database you have to run:
+To restore a backup to your current aplication in a database you have to run:
 
     php artisan mysql:restore filename
 
