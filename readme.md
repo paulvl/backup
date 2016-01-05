@@ -1,10 +1,5 @@
 ## Backup
 
-[![Latest Stable Version](https://poser.pugx.org/paulvl/backup/v/stable)](https://packagist.org/packages/paulvl/backup)
-[![Latest Unstable Version](https://poser.pugx.org/paulvl/backup/v/unstable)](https://packagist.org/packages/paulvl/backup)
-[![License](https://poser.pugx.org/paulvl/backup/license)](https://packagist.org/packages/paulvl/backup)
-[![Total Downloads](https://poser.pugx.org/paulvl/backup/downloads)](https://packagist.org/packages/paulvl/backup)
-
 Backup is a Laravel package that allow the creation and restoration of database backups in an easy way.
 
 [![Latest Stable Version](https://poser.pugx.org/paulvl/backup/v/stable)](https://packagist.org/packages/paulvl/backup)  [![Latest Unstable Version](https://poser.pugx.org/paulvl/backup/v/unstable)](https://packagist.org/packages/paulvl/backup) [![License](https://poser.pugx.org/paulvl/backup/license)](https://packagist.org/packages/paulvl/backup) [![Total Downloads](https://poser.pugx.org/paulvl/backup/downloads)](https://packagist.org/packages/paulvl/backup)
