@@ -2,6 +2,8 @@
 
 Backup is a Laravel package that allow the creation and restoration of database backups in an easy way.
 
+> For Laravel 5.1 see [5.1 branch](https://github.com/paulvl/backup/tree/5.1)
+
 [![Latest Stable Version](https://poser.pugx.org/paulvl/backup/v/stable)](https://packagist.org/packages/paulvl/backup)  [![Latest Unstable Version](https://poser.pugx.org/paulvl/backup/v/unstable)](https://packagist.org/packages/paulvl/backup) [![License](https://poser.pugx.org/paulvl/backup/license)](https://packagist.org/packages/paulvl/backup) [![Total Downloads](https://poser.pugx.org/paulvl/backup/downloads)](https://packagist.org/packages/paulvl/backup)
 
 ## **Quick Installation**
@@ -10,12 +12,12 @@ Begin by installing this package through Composer.
 
 You can run:
 
-    composer require paulvl/backup 1.*
+    composer require paulvl/backup 2.*
 
 Or edit your project's composer.json file to require paulvl/backup.
 ```
     "require": {
-        "paulvl/backup": "1.*"
+        "paulvl/backup": "2.*"
     }
 ```
 Next, update Composer from the Terminal:
@@ -70,4 +72,5 @@ protected function schedule(Schedule $schedule)
 ```
 ## **Contribute and share ;-)**
 If you like this little piece of code share it with you friends and feel free to contribute with any improvements.
+
 
