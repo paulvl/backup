@@ -7,13 +7,13 @@ use Illuminate\Support\ServiceProvider;
 class BackupServiceProvider extends ServiceProvider
 {
     /**
-    * Bootstrap the application services.
-    *
-    * @return void
-    */
+     * Bootstrap the application services.
+     *
+     * @return void
+     */
     public function boot()
     {
-    //Publishes package config file to applications config folder
+        //Publishes package config file to applications config folder
     $this->publishes([__DIR__.'/config/backup.php' => config_path('backup.php')]);
     }
 
@@ -28,9 +28,9 @@ class BackupServiceProvider extends ServiceProvider
         $this->registerMysqlRestoreCommand();
     }
 
-     /**
-    * Register the mysql:dump command.
-    */
+    /**
+     * Register the mysql:dump command.
+     */
     private function registerMysqlDumpCommand()
     {
         $this->app->singleton('command.backup-mysql.dump', function ($app) {
@@ -39,9 +39,9 @@ class BackupServiceProvider extends ServiceProvider
         $this->commands('command.backup-mysql.dump');
     }
 
-     /**
-    * Register the mysql:restore command.
-    */
+    /**
+     * Register the mysql:restore command.
+     */
     private function registerMysqlRestoreCommand()
     {
         $this->app->singleton('command.backup-mysql.restore', function ($app) {

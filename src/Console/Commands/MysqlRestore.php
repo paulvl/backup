@@ -6,11 +6,11 @@ use Illuminate\Console\Command;
 
 class MysqlRestore extends Command
 {
-     /**
-    * The name and signature of the console command.
-    *
-    * @var string
-    */
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'backup:mysql-restore
                             {filename : Mysql backup filename}';
 
@@ -28,13 +28,13 @@ class MysqlRestore extends Command
      */
     public function handle()
     {
-        $host       = env('DB_HOST');
-        $database   = env('DB_DATABASE');
-        $username   = env('DB_USERNAME');
-        $password   = env('DB_PASSWORD');
+        $host = env('DB_HOST');
+        $database = env('DB_DATABASE');
+        $username = env('DB_USERNAME');
+        $password = env('DB_PASSWORD');
 
         $backupPath = config('backup.mysql.path');
-        $filename   = $this->argument('filename');
+        $filename = $this->argument('filename');
 
         $restoreCommand = "mysql -u $username -p$password $database < $backupPath$filename";
         exec($restoreCommand);
