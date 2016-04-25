@@ -30,6 +30,7 @@ class MysqlDump extends Command
     public function handle()
     {
         $host = config('database.connections.mysql.host');
+	$port = config('database.connections.mysql.port');
         $database = config('database.connections.mysql.database');
         $username = config('database.connections.mysql.username');
         $password = config('database.connections.mysql.password');
@@ -43,7 +44,8 @@ class MysqlDump extends Command
 
         $filename = $database.'_'.empty(trim($this->argument('filename'))) ? $database.'_'.\Carbon\Carbon::now()->format('YmdHis') : trim($this->argument('filename'));
 
-        $dumpCommand = "mysqldump -e -f -h $host -u $username -p$password $database > $backupPath$filename.sql";
+	$portArg = ($port !== null) ? '-P '.$port : ''
+        $dumpCommand = "mysqldump -e -f -h $host $portArg -u $username -p$password $database > $backupPath$filename.sql";
 
         exec($dumpCommand);
 
