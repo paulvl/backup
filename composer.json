@@ -1,6 +1,6 @@
 {
     "name": "paulvl/backup",
-    "description": "Database backup package for laravel 5.2",
+    "description": "Database backup package for laravel 5.3",
     "license": "MIT",
     "authors": [
         {
@@ -11,7 +11,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.2.*",
+        "laravel/framework": "5.3.*",
         "league/flysystem-aws-s3-v3": "~1.0"
     },
     "autoload": {
