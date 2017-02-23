@@ -62,7 +62,7 @@ class MysqlDump extends Command
     /**
      * Determine if backup will be cloud synced.
      *
-     * @var boolean
+     * @var bool
      */
     protected $cloudSync;
 
@@ -101,9 +101,9 @@ class MysqlDump extends Command
         $this->mysqldumpPath = config('backup.mysql.mysqldump_path', 'mysqldump');
 
         $this->connection = [
-            'host' => config('database.connections.mysql.host'),
+            'host'     => config('database.connections.mysql.host'),
             'database' => config('database.connections.mysql.database'),
-            'port' => config('database.connections.mysql.port'),
+            'port'     => config('database.connections.mysql.port'),
             'username' => config('database.connections.mysql.username'),
             'password' => config('database.connections.mysql.password'),
         ];
@@ -147,22 +147,24 @@ class MysqlDump extends Command
     {
         $filename = trim($this->argument('filename'));
         if (empty($filename)) {
-            $filename = $this->connection['database'] . '_'. \Carbon\Carbon::now()->format('YmdHis');
+            $filename = $this->connection['database'].'_'.\Carbon\Carbon::now()->format('YmdHis');
         }
         $filename = explode('.', $filename)[0];
-        $this->filename = $filename . '.sql' . ($this->isCompressionEnabled ? '.gz' : '');
+        $this->filename = $filename.'.sql'.($this->isCompressionEnabled ? '.gz' : '');
     }
 
     protected function getFilePath()
     {
         $localPath = $this->cleanPath($this->localPath);
-        return $localPath . DIRECTORY_SEPARATOR . $this->filename;
+
+        return $localPath.DIRECTORY_SEPARATOR.$this->filename;
     }
 
     protected function getFileCloudPath()
     {
         $cloudPath = $this->cleanPath($this->cloudPath);
-        return $cloudPath . DIRECTORY_SEPARATOR . $this->filename;
+
+        return $cloudPath.DIRECTORY_SEPARATOR.$this->filename;
     }
 
     protected function isPathAbsolute($path)
@@ -177,10 +179,10 @@ class MysqlDump extends Command
 
     protected function storeDumpFile($data)
     {
-        if ($this->keepLocal){
+        if ($this->keepLocal) {
             Storage::disk($this->localDisk)->put($this->getFilePath(), $data);
         }
-        $compressionMessage = $this->isCompressionEnabled ? "and compressed" : "";
+        $compressionMessage = $this->isCompressionEnabled ? 'and compressed' : '';
         $this->info("Database '{$this->connection['database']}' dumped {$compressionMessage} successfully");
         if ($this->cloudSync) {
             Storage::disk($this->cloudDisk)->put($this->getFileCloudPath(), $data);
@@ -197,9 +199,9 @@ class MysqlDump extends Command
         $password = $this->connection['password'];
 
         $databaseArg = escapeshellarg($database);
-        $portArg = !empty($port) ? "-P ". escapeshellarg($port) : "";
-        $passwordArg = !empty($password) ? "-p" . escapeshellarg($password) : "";
-        
+        $portArg = !empty($port) ? '-P '.escapeshellarg($port) : '';
+        $passwordArg = !empty($password) ? '-p'.escapeshellarg($password) : '';
+
         $dumpCommand = "{$this->mysqldumpPath} -C -h {$hostname} {$portArg} -u{$username} {$passwordArg} --single-transaction --skip-lock-tables --quick {$databaseArg}";
 
         exec($dumpCommand, $dumpResult, $result);
