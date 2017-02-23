@@ -65,7 +65,7 @@ class MysqlRestore extends Command
     /**
      * Determine if backup will be restored from cloud.
      *
-     * @var boolean
+     * @var bool
      */
     protected $cloudRestoration;
 
@@ -86,21 +86,21 @@ class MysqlRestore extends Command
     /**
      * Determinate if options will display all files.
      *
-     * @var boolean
+     * @var bool
      */
     protected $displayAllBackupFiles;
 
     /**
      * Determinate if latest backup will be restored.
      *
-     * @var boolean
+     * @var bool
      */
     protected $restoreLatestBackup;
 
     /**
      * Confirms restoration without asking.
      *
-     * @var boolean
+     * @var bool
      */
     protected $confirmRestoration;
 
@@ -111,9 +111,9 @@ class MysqlRestore extends Command
         $this->mysqlPath = config('backup.mysql.mysql_path', 'mysql');
 
         $this->connection = [
-            'host' => config('database.connections.mysql.host'),
+            'host'     => config('database.connections.mysql.host'),
             'database' => config('database.connections.mysql.database'),
-            'port' => config('database.connections.mysql.port'),
+            'port'     => config('database.connections.mysql.port'),
             'username' => config('database.connections.mysql.username'),
             'password' => config('database.connections.mysql.password'),
         ];
@@ -148,8 +148,8 @@ class MysqlRestore extends Command
 
     protected function handleContinue()
     {
-        if (! $this->confirmRestoration) {
-            if (! $this->confirm('Are you sure that you want to restore the database? [y|N]')) {
+        if (!$this->confirmRestoration) {
+            if (!$this->confirm('Are you sure that you want to restore the database? [y|N]')) {
                 die();
             }
         }
@@ -158,15 +158,15 @@ class MysqlRestore extends Command
     protected function setFilename()
     {
         $filename = trim($this->option('filename'));
-        if (empty($filename)) {            
+        if (empty($filename)) {
             $filename = $this->displayOptions();
         }
         $this->filename = $filename;
-        if (! $this->isFileExtensionValid($this->filename)) {
+        if (!$this->isFileExtensionValid($this->filename)) {
             $this->error("File '{$this->filename}' is not a valid backup file!");
             die();
         }
-        if (! $this->backupFileExists()) {
+        if (!$this->backupFileExists()) {
             $this->error("File '{$this->filename}' does not exists!");
             die();
         }
@@ -180,13 +180,15 @@ class MysqlRestore extends Command
     protected function getFilePath($filename = null, $path = null)
     {
         $path = $this->cleanPath(is_null($path) ? $this->cloudRestoration ? $this->cloudPath : $this->localPath : $path);
-        return $path . DIRECTORY_SEPARATOR . (is_null($filename) ? $this->filename : $filename);
+
+        return $path.DIRECTORY_SEPARATOR.(is_null($filename) ? $this->filename : $filename);
     }
 
     protected function getAbsFilePath($filename, $disk = null, $path = null)
     {
         $path = $this->cleanPath($path);
-        return Storage::disk(is_null($disk) ? $this->getDisk() : $disk)->getAdapter()->getPathPrefix() .$path . DIRECTORY_SEPARATOR . $filename;
+
+        return Storage::disk(is_null($disk) ? $this->getDisk() : $disk)->getAdapter()->getPathPrefix().$path.DIRECTORY_SEPARATOR.$filename;
     }
 
     protected function cleanPath($path)
@@ -197,7 +199,8 @@ class MysqlRestore extends Command
     protected function sanitizeFile($file)
     {
         $path = $this->cleanPath($this->cloudRestoration ? $this->cloudPath : $this->localPath);
-        return str_replace($path . DIRECTORY_SEPARATOR, '', $file);
+
+        return str_replace($path.DIRECTORY_SEPARATOR, '', $file);
     }
 
     protected function isFileExtensionValid($filename)
@@ -219,6 +222,7 @@ class MysqlRestore extends Command
         } else {
             $filename = $this->choice("Which database backup file do you want to restore from '{$this->getDisk()}' disk?", $files, false);
         }
+
         return $filename;
     }
 
@@ -234,9 +238,10 @@ class MysqlRestore extends Command
             }
         }
         if (count($files) == 0) {
-            $this->error("There are no backup files to restore!");
+            $this->error('There are no backup files to restore!');
             die();
         }
+
         return $files;
     }
 
@@ -249,8 +254,8 @@ class MysqlRestore extends Command
         $password = $this->connection['password'];
 
         $databaseArg = escapeshellarg($database);
-        $portArg = !empty($port) ? "-P ". escapeshellarg($port) : "";
-        $passwordArg = !empty($password) ? "-p" . escapeshellarg($password) : "";
+        $portArg = !empty($port) ? '-P '.escapeshellarg($port) : '';
+        $passwordArg = !empty($password) ? '-p'.escapeshellarg($password) : '';
 
         $localFilename = $this->filename;
 
@@ -272,7 +277,7 @@ class MysqlRestore extends Command
             $isTempFilename = true;
         }
 
-        $restoreCommand =  "{$this->mysqlPath} -h {$hostname} {$portArg} -u{$username} {$passwordArg} {$databaseArg} < " . $this->getAbsFilePath($filename, $this->localDisk, $this->localPath);
+        $restoreCommand = "{$this->mysqlPath} -h {$hostname} {$portArg} -u{$username} {$passwordArg} {$databaseArg} < ".$this->getAbsFilePath($filename, $this->localDisk, $this->localPath);
 
         exec($restoreCommand, $restoreResult, $result);
 
