@@ -1,17 +1,18 @@
 {
     "name": "paulvl/backup",
-    "description": "Database backup package for laravel 5.2",
+    "description": "Database backup package for laravel 5.*",
     "license": "MIT",
     "authors": [
         {
             "name": "Paul Vidal",
-            "email": "paul.vidal.lujan@gmail.com"
+            "email": "paul@tecactus.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.2.*",
+        "illuminate/console": "5.*",
+        "illuminate/support": "5.*",
         "league/flysystem-aws-s3-v3": "~1.0"
     },
     "autoload": {

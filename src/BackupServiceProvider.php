@@ -14,7 +14,7 @@ class BackupServiceProvider extends ServiceProvider
     public function boot()
     {
         //Publishes package config file to applications config folder
-    $this->publishes([__DIR__.'/config/backup.php' => config_path('backup.php')]);
+        $this->publishes([__DIR__.'/config/backup.php' => config_path('backup.php')], 'config');
     }
 
     /**
@@ -34,7 +34,7 @@ class BackupServiceProvider extends ServiceProvider
     private function registerMysqlDumpCommand()
     {
         $this->app->singleton('command.backup-mysql.dump', function ($app) {
-        return $app['Backup\Console\Commands\MysqlDump'];
+            return $app['Backup\Console\Commands\MysqlDump'];
         });
         $this->commands('command.backup-mysql.dump');
     }
@@ -45,7 +45,7 @@ class BackupServiceProvider extends ServiceProvider
     private function registerMysqlRestoreCommand()
     {
         $this->app->singleton('command.backup-mysql.restore', function ($app) {
-        return $app['Backup\Console\Commands\MysqlRestore'];
+            return $app['Backup\Console\Commands\MysqlRestore'];
         });
         $this->commands('command.backup-mysql.restore');
     }
