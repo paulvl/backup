@@ -19,5 +19,12 @@
         "psr-4": {
             "Backup\\": "src/"
         }
-    }
+    },
+    "extra": {
+         "laravel": {
+             "providers": [
+                 "Backup\\BackupServiceProvider"
+             ]
+         }
+     }
 }
