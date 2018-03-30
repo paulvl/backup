@@ -13,7 +13,7 @@ class MysqlRestore extends Command
      * @var string
      */
     protected $signature = "backup:mysql-restore
-                            {--f|filename= : Especifiy a backup file name}
+                            {--f|filename= : Specify a backup file name}
                             {--A|all-backup-files : Display all available backup files on disk. By default displays files for current connection's database}
                             {--C|from-cloud : Display a list of backup files from cloud disk}
                             {--L|restore-latest-backup : Use latest backup file to restore database}
@@ -25,7 +25,7 @@ class MysqlRestore extends Command
      *
      * @var string
      */
-    protected $description = 'Restore your Mysql database from a file';
+    protected $description = 'Restore your MySQL database from a file';
 
     /**
      * The database connection data.
