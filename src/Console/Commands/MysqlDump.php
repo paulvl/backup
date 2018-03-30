@@ -198,7 +198,7 @@ class MysqlDump extends Command
             Storage::disk($this->localDisk)->put($this->getFilePath(), $data);
         }
         $compressionMessage = $this->isCompressionEnabled ? 'and compressed' : '';
-        $this->info('Database '.((!empty($this->table)) ? 'table ' : '') . "'{$this->connection['database']}'".((!empty($this->table)) ? ".'".$this->table."'" : '')." dumped {$compressionMessage} successfully");
+        $this->info('Database '.((!empty($this->table)) ? 'table ' : '')."'{$this->connection['database']}'".((!empty($this->table)) ? ".'".$this->table."'" : '')." dumped {$compressionMessage} successfully");
         if ($this->cloudSync) {
             Storage::disk($this->cloudDisk)->put($this->getFileCloudPath(), $data);
             $this->info("Database dump '{$this->filename}' synced successfully with '{$this->cloudDisk}' disk");
