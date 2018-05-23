@@ -1,0 +1,30 @@
+{
+    "name": "paulvl/backup",
+    "description": "Database backup package for laravel 5.*",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Paul Vidal",
+            "email": "paul@tecactus.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.5.9",
+        "illuminate/console": "5.*",
+        "illuminate/support": "5.*",
+        "league/flysystem-aws-s3-v3": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Backup\\": "src/"
+        }
+    },
+    "extra": {
+         "laravel": {
+             "providers": [
+                 "Backup\\BackupServiceProvider"
+             ]
+         }
+     }
+}
