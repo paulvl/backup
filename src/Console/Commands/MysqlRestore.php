@@ -143,7 +143,7 @@ class MysqlRestore extends Command
         $this->displayAllBackupFiles = $this->option('all-backup-files');
         $this->restoreLatestBackup = $this->option('restore-latest-backup');
         $this->confirmRestoration = $this->option('yes');
-        
+
         if ($connection = $this->option('database')) {
             $this->connection = [
                 'host'     => config("database.connections.{$connection}.host"),
