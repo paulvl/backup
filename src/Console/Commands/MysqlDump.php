@@ -229,12 +229,14 @@ class MysqlDump extends Command
             $this->error("Database '{$database}' cannot be dumped");
         }
     }
+
     private function getIgnoredTablesCommandLine($database, $tables)
     {
         $command_line = '';
         foreach ($tables as $table) {
             $command_line .= ' --ignore-table='.escapeshellarg($database.'.'.$table);
         }
+        
         return $command_line;
     }
 }
