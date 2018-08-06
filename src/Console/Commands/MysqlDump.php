@@ -15,7 +15,8 @@ class MysqlDump extends Command
     protected $signature = 'backup:mysql-dump
                             {filename? : Mysql backup filename}
                             {--no-compress : Disable file compression regardless if is enabled in the configuration file. This option will be always overwrited by --compress option}
-                            {--compress : Enable file compression regardless if is disabled in the configuration file. This option will always overwrite --no-compress option}';
+                            {--compress : Enable file compression regardless if is disabled in the configuration file. This option will always overwrite --no-compress option}
+                            {--ignore-table= : Ignore a specific table.}';
 
     /**
      * The console command description.
@@ -51,6 +52,13 @@ class MysqlDump extends Command
      * @var string
      */
     protected $localDisk;
+
+    /**
+     * In case that a specific table has to be ignored.
+     *
+     * @var string
+     */
+    protected $ignoredTable;
 
     /**
      * Local path where the backups will be stored.
@@ -131,6 +139,7 @@ class MysqlDump extends Command
     {
         $compress = $this->option('compress');
         $noCompress = $this->option('no-compress');
+        $ignoreTable = $this->option("ignore-table");
 
         if ($compress) {
             $this->isCompressionEnabled = true;
@@ -138,6 +147,10 @@ class MysqlDump extends Command
             $this->isCompressionEnabled = false;
         } else {
             $this->isCompressionEnabled = config('backup.mysql.compress', false);
+        }
+
+        if($ignoreTable){
+            $this->ignoredTable = trim($ignoreTable);
         }
 
         $this->setFilename();
@@ -202,7 +215,9 @@ class MysqlDump extends Command
         $portArg = !empty($port) ? '-P '.escapeshellarg($port) : '';
         $passwordArg = !empty($password) ? '-p'.escapeshellarg($password) : '';
 
-        $dumpCommand = "{$this->mysqldumpPath} -C -h {$hostname} {$portArg} -u{$username} {$passwordArg} --single-transaction --skip-lock-tables --quick {$databaseArg}";
+        $ignoreTable = $this->ignoredTable ? '--ignore-table='.$database.".".escapeshellarg($this->ignoredTable) : '';
+
+        $dumpCommand = "{$this->mysqldumpPath} -C -h {$hostname} {$portArg} -u{$username} {$passwordArg} {$ignoreTable} --single-transaction --skip-lock-tables --quick {$databaseArg}";
 
         exec($dumpCommand, $dumpResult, $result);
 
