@@ -149,7 +149,7 @@ class MysqlDump extends Command
             $this->isCompressionEnabled = config('backup.mysql.compress', false);
         }
 
-        if ($ignoreTables){
+        if ($ignoreTables) {
             $this->ignoredTables = explode(',', trim($ignoreTables));
         }
 
@@ -232,7 +232,7 @@ class MysqlDump extends Command
     private function getIgnoredTablesCommandLine($database, $tables)
     {
         $command_line = '';
-        foreach ($tables as $table){
+        foreach ($tables as $table) {
             $command_line .= ' --ignore-table='.escapeshellarg($database.'.'.$table);
         }
         return $command_line;
