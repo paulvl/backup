@@ -139,7 +139,7 @@ class MysqlDump extends Command
     {
         $compress = $this->option('compress');
         $noCompress = $this->option('no-compress');
-        $ignoreTables = $this->option("ignore-tables");
+        $ignoreTables = $this->option('ignore-tables');
 
         if ($compress) {
             $this->isCompressionEnabled = true;
@@ -150,7 +150,7 @@ class MysqlDump extends Command
         }
 
         if($ignoreTables){
-            $this->ignoredTables = explode(",", trim($ignoreTables));
+            $this->ignoredTables = explode(',', trim($ignoreTables));
         }
 
         $this->setFilename();
@@ -230,9 +230,9 @@ class MysqlDump extends Command
         }
     }
     private function getIgnoredTablesCommandLine($database, $tables){
-        $command_line = "";
+        $command_line = '';
         foreach($tables as $table){
-            $command_line .= ' --ignore-table='.escapeshellarg($database.".".$table);
+            $command_line .= ' --ignore-table='.escapeshellarg($database.'.'.$table);
         }
         return $command_line;
     }
