@@ -16,7 +16,8 @@ class MysqlDump extends Command
                             {filename? : Mysql backup filename}
                             {--no-compress : Disable file compression regardless if is enabled in the configuration file. This option will be always overwrited by --compress option}
                             {--compress : Enable file compression regardless if is disabled in the configuration file. This option will always overwrite --no-compress option}
-                            {--ignore-tables= : Ignore 1 or more tables.}';
+                            {--ignore-tables= : Ignore 1 or more tables.}
+                            {--tables= : Dump specific tables, this argument will override ignore-tables.}';
 
     /**
      * The console command description.
@@ -59,6 +60,13 @@ class MysqlDump extends Command
      * @var string
      */
     protected $ignoredTables;
+
+    /**
+     * These specific tables will be dumped (ignoring ignoredTables argument)
+     *
+     * @var string
+     */
+    protected $tables;
 
     /**
      * Local path where the backups will be stored.
@@ -140,6 +148,7 @@ class MysqlDump extends Command
         $compress = $this->option('compress');
         $noCompress = $this->option('no-compress');
         $ignoreTables = $this->option('ignore-tables');
+        $tables = $this->option('tables');
 
         if ($compress) {
             $this->isCompressionEnabled = true;
@@ -149,8 +158,10 @@ class MysqlDump extends Command
             $this->isCompressionEnabled = config('backup.mysql.compress', false);
         }
 
-        if ($ignoreTables) {
+        if ($ignoreTables && !$tables) {
             $this->ignoredTables = explode(',', trim($ignoreTables));
+        }else if($tables){
+            $this->tables = explode(',', trim($tables));
         }
 
         $this->setFilename();
@@ -216,8 +227,9 @@ class MysqlDump extends Command
         $passwordArg = !empty($password) ? '-p'.escapeshellarg($password) : '';
 
         $ignoredTables = $this->ignoredTables ? $this->getIgnoredTablesCommandLine($database, $this->ignoredTables) : '';
+        $tables = $this->tables ? implode(" ", $this->tables) : "";
 
-        $dumpCommand = "{$this->mysqldumpPath} -C -h {$hostname} {$portArg} -u{$username} {$passwordArg} {$ignoredTables} --single-transaction --skip-lock-tables --quick {$databaseArg}";
+        $dumpCommand = "{$this->mysqldumpPath} -C -h {$hostname} {$portArg} -u{$username} {$passwordArg} {$ignoredTables} --single-transaction --skip-lock-tables --quick {$databaseArg} {$tables}";
 
         exec($dumpCommand, $dumpResult, $result);
 
