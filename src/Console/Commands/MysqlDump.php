@@ -32,6 +32,27 @@ class MysqlDump extends Command
     protected $connection;
 
     /**
+     * The databases connection data.
+     *
+     * @var array
+     */
+    protected $connections;
+    
+    /**
+     * Flag if connection != null
+     *
+     * @var array
+     */
+    protected $unique_connection;
+
+    /**
+     * The databases connection data.
+     *
+     * @var array
+     */
+    protected $file_names;
+
+    /**
      * The path to mysql dump.
      *
      * @var string
@@ -99,14 +120,25 @@ class MysqlDump extends Command
         parent::__construct();
 
         $this->mysqldumpPath = config('backup.mysql.mysqldump_path', 'mysqldump');
+        
+        $this->file_names = [];
 
-        $this->connection = [
-            'host'     => config('database.connections.mysql.host'),
-            'database' => config('database.connections.mysql.database'),
-            'port'     => config('database.connections.mysql.port'),
-            'username' => config('database.connections.mysql.username'),
-            'password' => config('database.connections.mysql.password'),
-        ];
+        $this->connections = config('backup.mysql.connections');
+
+        $this->unique_connection = false;
+
+        if (is_null($this->connections) || !is_array($this->connections)) 
+        {
+            $this->unique_connection = true;
+
+            $this->connection = [
+                'host'     => config('database.connections.mysql.host'),
+                'database' => config('database.connections.mysql.database'),
+                'port'     => config('database.connections.mysql.port'),
+                'username' => config('database.connections.mysql.username'),
+                'password' => config('database.connections.mysql.password'),
+            ];
+        }
 
         $this->localDisk = config('backup.mysql.local-storage.disk', 'local');
         $this->localPath = config('backup.mysql.local-storage.path', null);
@@ -124,7 +156,15 @@ class MysqlDump extends Command
     public function handle()
     {
         $this->handleOptions();
-        $this->dumpDatabase();
+        
+        if ($this->unique_connection)
+        {
+            $this->dumpDatabase($this->connection);
+        }
+        else
+        {
+            $this->dumpDatabases();
+        }
     }
 
     protected function handleOptions()
@@ -140,31 +180,49 @@ class MysqlDump extends Command
             $this->isCompressionEnabled = config('backup.mysql.compress', false);
         }
 
-        $this->setFilename();
+        if ($this->unique_connection) 
+        {
+            $this->setFilename($this->connection);
+        }
+        else
+        {
+            foreach ($this->connections as $connection) 
+            {
+                $this->setFilename($connection);
+            }
+        }
     }
 
-    protected function setFilename()
+    protected function setFilename($connection)
     {
         $filename = trim($this->argument('filename'));
         if (empty($filename)) {
             $filename = $this->connection['database'].'_'.\Carbon\Carbon::now()->format('YmdHis');
         }
         $filename = explode('.', $filename)[0];
-        $this->filename = $filename.'.sql'.($this->isCompressionEnabled ? '.gz' : '');
+
+        if (!$this->unique_connection) 
+        {
+            $filename = $connection['database'].'_'.\Carbon\Carbon::now()->format('YmdHis');
+        }
+
+        $filename = $filename.'.sql'.($this->isCompressionEnabled ? '.gz' : '');
+        
+        $this->file_names[$connection['database']] = $filename;
     }
 
-    protected function getFilePath()
+    protected function getFilePath($connection)
     {
         $localPath = $this->cleanPath($this->localPath);
 
-        return $localPath.DIRECTORY_SEPARATOR.$this->filename;
+        return $localPath.DIRECTORY_SEPARATOR.$this->file_names[$connection['database']];
     }
 
-    protected function getFileCloudPath()
+    protected function getFileCloudPath($connection)
     {
         $cloudPath = $this->cleanPath($this->cloudPath);
 
-        return $cloudPath.DIRECTORY_SEPARATOR.$this->filename;
+        return $cloudPath.DIRECTORY_SEPARATOR.$this->file_names[$connection['database']];
     }
 
     protected function isPathAbsolute($path)
@@ -177,26 +235,26 @@ class MysqlDump extends Command
         return ltrim(rtrim($path, DIRECTORY_SEPARATOR), DIRECTORY_SEPARATOR);
     }
 
-    protected function storeDumpFile($data)
+    protected function storeDumpFile($data, $connection)
     {
         if ($this->keepLocal) {
-            Storage::disk($this->localDisk)->put($this->getFilePath(), $data);
+            Storage::disk($this->localDisk)->put($this->getFilePath($connection), $data);
         }
         $compressionMessage = $this->isCompressionEnabled ? 'and compressed' : '';
-        $this->info("Database '{$this->connection['database']}' dumped {$compressionMessage} successfully");
+        $this->info("Database '{$this->file_names[$connection['database']]}' dumped {$compressionMessage} successfully");
         if ($this->cloudSync) {
-            Storage::disk($this->cloudDisk)->put($this->getFileCloudPath(), $data);
-            $this->info("Database dump '{$this->filename}' synced successfully with '{$this->cloudDisk}' disk");
+            Storage::disk($this->cloudDisk)->put($this->getFileCloudPath($connection), $data);
+            $this->info("Database dump '{$this->file_names[$connection['database']]}' synced successfully with '{$this->cloudDisk}' disk");
         }
     }
 
-    protected function dumpDatabase()
+    protected function dumpDatabase($connection)
     {
-        $hostname = escapeshellarg($this->connection['host']);
-        $port = $this->connection['port'];
-        $database = $this->connection['database'];
-        $username = escapeshellarg($this->connection['username']);
-        $password = $this->connection['password'];
+        $hostname = escapeshellarg($connection['host']);
+        $port = $connection['port'];
+        $database = $connection['database'];
+        $username = escapeshellarg($connection['username']);
+        $password = $connection['password'];
 
         $databaseArg = escapeshellarg($database);
         $portArg = !empty($port) ? '-P '.escapeshellarg($port) : '';
@@ -209,9 +267,17 @@ class MysqlDump extends Command
         if ($result == 0) {
             $dumpResult = implode(PHP_EOL, $dumpResult);
             $dumpResult = $this->isCompressionEnabled ? gzcompress($dumpResult, 9) : $dumpResult;
-            $this->storeDumpFile($dumpResult);
+            $this->storeDumpFile($dumpResult, $connection);
         } else {
             $this->error("Database '{$database}' cannot be dumped");
+        }
+    }
+
+    protected function dumpDatabases()
+    {
+        foreach ($this->connections as $connection) 
+        {
+            $this->dumpDatabase($connection);
         }
     }
 }
