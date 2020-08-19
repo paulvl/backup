@@ -18,6 +18,7 @@ class MysqlRestore extends Command
                             {--C|from-cloud : Display a list of backup files from cloud disk}
                             {--L|restore-latest-backup : Use latest backup file to restore database}
                             {--y|yes : Confirms database restoration}
+                            {--database= : name of database connection}
                             ";
 
     /**
@@ -142,6 +143,16 @@ class MysqlRestore extends Command
         $this->displayAllBackupFiles = $this->option('all-backup-files');
         $this->restoreLatestBackup = $this->option('restore-latest-backup');
         $this->confirmRestoration = $this->option('yes');
+
+        if ($connection = $this->option('database')) {
+            $this->connection = [
+                'host'     => config("database.connections.{$connection}.host"),
+                'database' => config("database.connections.{$connection}.database"),
+                'port'     => config("database.connections.{$connection}.port"),
+                'username' => config("database.connections.{$connection}.username"),
+                'password' => config("database.connections.{$connection}.password"),
+            ];
+        }
 
         $this->setFilename();
     }

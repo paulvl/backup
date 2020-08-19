@@ -15,7 +15,9 @@ class MysqlDump extends Command
     protected $signature = 'backup:mysql-dump
                             {filename? : Mysql backup filename}
                             {--no-compress : Disable file compression regardless if is enabled in the configuration file. This option will be always overwrited by --compress option}
-                            {--compress : Enable file compression regardless if is disabled in the configuration file. This option will always overwrite --no-compress option}';
+                            {--compress : Enable file compression regardless if is disabled in the configuration file. This option will always overwrite --no-compress option}
+                            {--database= : name of database connection}
+                            ';
 
     /**
      * The console command description.
@@ -131,6 +133,15 @@ class MysqlDump extends Command
     {
         $compress = $this->option('compress');
         $noCompress = $this->option('no-compress');
+        if ($connection = $this->option('database')) {
+            $this->connection = [
+                'host'     => config("database.connections.{$connection}.host"),
+                'database' => config("database.connections.{$connection}.database"),
+                'port'     => config("database.connections.{$connection}.port"),
+                'username' => config("database.connections.{$connection}.username"),
+                'password' => config("database.connections.{$connection}.password"),
+            ];
+        }
 
         if ($compress) {
             $this->isCompressionEnabled = true;
