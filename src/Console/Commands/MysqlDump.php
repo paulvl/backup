@@ -14,6 +14,7 @@ class MysqlDump extends Command
      */
     protected $signature = 'backup:mysql-dump
                             {filename? : Mysql backup filename}
+                            {--t|table= : Specific table that you want to be dumped}
                             {--no-compress : Disable file compression regardless if is enabled in the configuration file. This option will be always overwrited by --compress option}
                             {--compress : Enable file compression regardless if is disabled in the configuration file. This option will always overwrite --no-compress option}
                             {--database= : name of database connection}
@@ -24,7 +25,7 @@ class MysqlDump extends Command
      *
      * @var string
      */
-    protected $description = 'Dump your Mysql database to a file';
+    protected $description = 'Dump your entire MySQL database or an individual table to a file';
 
     /**
      * The database connection data.
@@ -46,6 +47,13 @@ class MysqlDump extends Command
      * @var string
      */
     protected $filename;
+
+    /**
+     * Table to be dumped.
+     *
+     * @var string
+     */
+    protected $table;
 
     /**
      * Local disk where backups will be stored.
@@ -151,14 +159,21 @@ class MysqlDump extends Command
             $this->isCompressionEnabled = config('backup.mysql.compress', false);
         }
 
+        $this->setTable();
         $this->setFilename();
+    }
+
+    protected function setTable()
+    {
+        $table = trim($this->option('table'));
+        $this->table = (empty($table)) ? null : $table;
     }
 
     protected function setFilename()
     {
         $filename = trim($this->argument('filename'));
         if (empty($filename)) {
-            $filename = $this->connection['database'].'_'.\Carbon\Carbon::now()->format('YmdHis');
+            $filename = $this->connection['database'].'_'.((!empty($this->table)) ? $this->table.'_' : '').\Carbon\Carbon::now()->format('YmdHis');
         }
         $filename = explode('.', $filename)[0];
         $this->filename = $filename.'.sql'.($this->isCompressionEnabled ? '.gz' : '');
@@ -194,7 +209,7 @@ class MysqlDump extends Command
             Storage::disk($this->localDisk)->put($this->getFilePath(), $data);
         }
         $compressionMessage = $this->isCompressionEnabled ? 'and compressed' : '';
-        $this->info("Database '{$this->connection['database']}' dumped {$compressionMessage} successfully");
+        $this->info('Database '.((!empty($this->table)) ? 'table ' : '')."'{$this->connection['database']}'".((!empty($this->table)) ? ".'".$this->table."'" : '')." dumped {$compressionMessage} successfully");
         if ($this->cloudSync) {
             Storage::disk($this->cloudDisk)->put($this->getFileCloudPath(), $data);
             $this->info("Database dump '{$this->filename}' synced successfully with '{$this->cloudDisk}' disk");
@@ -210,10 +225,11 @@ class MysqlDump extends Command
         $password = $this->connection['password'];
 
         $databaseArg = escapeshellarg($database);
+        $tableArg = (empty($this->table)) ? '' : escapeshellarg($this->table);
         $portArg = !empty($port) ? '-P '.escapeshellarg($port) : '';
         $passwordArg = !empty($password) ? '-p'.escapeshellarg($password) : '';
 
-        $dumpCommand = "{$this->mysqldumpPath} -C -h {$hostname} {$portArg} -u{$username} {$passwordArg} --single-transaction --skip-lock-tables --quick {$databaseArg}";
+        $dumpCommand = "{$this->mysqldumpPath} -C -h {$hostname} {$portArg} -u{$username} {$passwordArg} --single-transaction --skip-lock-tables --quick {$databaseArg} {$tableArg}";
 
         exec($dumpCommand, $dumpResult, $result);
 
