@@ -161,7 +161,7 @@ class MysqlRestore extends Command
     {
         if (!$this->confirmRestoration) {
             if (!$this->confirm('Are you sure that you want to restore the database? [y|N]')) {
-                die();
+                exit();
             }
         }
     }
@@ -175,11 +175,11 @@ class MysqlRestore extends Command
         $this->filename = $filename;
         if (!$this->isFileExtensionValid($this->filename)) {
             $this->error("File '{$this->filename}' is not a valid backup file!");
-            die();
+            exit();
         }
         if (!$this->backupFileExists()) {
             $this->error("File '{$this->filename}' does not exists!");
-            die();
+            exit();
         }
     }
 
@@ -250,7 +250,7 @@ class MysqlRestore extends Command
         }
         if (count($files) == 0) {
             $this->error('There are no backup files to restore!');
-            die();
+            exit();
         }
 
         return $files;
