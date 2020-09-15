@@ -18,6 +18,7 @@ class MysqlRestore extends Command
                             {--C|from-cloud : Display a list of backup files from cloud disk}
                             {--L|restore-latest-backup : Use latest backup file to restore database}
                             {--y|yes : Confirms database restoration}
+                            {--database= : name of database connection}
                             ";
 
     /**
@@ -143,6 +144,16 @@ class MysqlRestore extends Command
         $this->restoreLatestBackup = $this->option('restore-latest-backup');
         $this->confirmRestoration = $this->option('yes');
 
+        if ($connection = $this->option('database')) {
+            $this->connection = [
+                'host'     => config("database.connections.{$connection}.host"),
+                'database' => config("database.connections.{$connection}.database"),
+                'port'     => config("database.connections.{$connection}.port"),
+                'username' => config("database.connections.{$connection}.username"),
+                'password' => config("database.connections.{$connection}.password"),
+            ];
+        }
+
         $this->setFilename();
     }
 
@@ -150,7 +161,7 @@ class MysqlRestore extends Command
     {
         if (!$this->confirmRestoration) {
             if (!$this->confirm('Are you sure that you want to restore the database? [y|N]')) {
-                die();
+                exit();
             }
         }
     }
@@ -164,11 +175,11 @@ class MysqlRestore extends Command
         $this->filename = $filename;
         if (!$this->isFileExtensionValid($this->filename)) {
             $this->error("File '{$this->filename}' is not a valid backup file!");
-            die();
+            exit();
         }
         if (!$this->backupFileExists()) {
             $this->error("File '{$this->filename}' does not exists!");
-            die();
+            exit();
         }
     }
 
@@ -239,7 +250,7 @@ class MysqlRestore extends Command
         }
         if (count($files) == 0) {
             $this->error('There are no backup files to restore!');
-            die();
+            exit();
         }
 
         return $files;
