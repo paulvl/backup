@@ -16,7 +16,7 @@ class MysqlDump extends Command
                             {filename? : Mysql backup filename}
                             {--no-compress : Disable file compression regardless if is enabled in the configuration file. This option will be always overwrited by --compress option}
                             {--compress : Enable file compression regardless if is disabled in the configuration file. This option will always overwrite --no-compress option}
-                            {--database= : name of database connection}
+                            {--connection=mysql : Specify database connection name}
                             ';
 
     /**
@@ -102,14 +102,6 @@ class MysqlDump extends Command
 
         $this->mysqldumpPath = config('backup.mysql.mysqldump_path', 'mysqldump');
 
-        $this->connection = [
-            'host'     => config('database.connections.mysql.host'),
-            'database' => config('database.connections.mysql.database'),
-            'port'     => config('database.connections.mysql.port'),
-            'username' => config('database.connections.mysql.username'),
-            'password' => config('database.connections.mysql.password'),
-        ];
-
         $this->localDisk = config('backup.mysql.local-storage.disk', 'local');
         $this->localPath = config('backup.mysql.local-storage.path', null);
         $this->cloudSync = config('backup.mysql.cloud-storage.enabled', false);
@@ -133,15 +125,8 @@ class MysqlDump extends Command
     {
         $compress = $this->option('compress');
         $noCompress = $this->option('no-compress');
-        if ($connection = $this->option('database')) {
-            $this->connection = [
-                'host'     => config("database.connections.{$connection}.host"),
-                'database' => config("database.connections.{$connection}.database"),
-                'port'     => config("database.connections.{$connection}.port"),
-                'username' => config("database.connections.{$connection}.username"),
-                'password' => config("database.connections.{$connection}.password"),
-            ];
-        }
+
+        $this->validateAndSetConnection($this->option('connection'));
 
         if ($compress) {
             $this->isCompressionEnabled = true;
@@ -152,6 +137,29 @@ class MysqlDump extends Command
         }
 
         $this->setFilename();
+    }
+
+    protected function validateAndSetConnection($connection)
+    {
+        if(is_array($connectionData = config("database.connections.{$connection}")))
+        {
+            if($connectionData['driver'] == 'mysql')
+            {
+                $this->connection = [
+                    'host'     => $connectionData['host'],
+                    'database' => $connectionData['database'],
+                    'port'     => $connectionData['port'],
+                    'username' => $connectionData['username'],
+                    'password' => $connectionData['password'],
+                ];
+            } else {
+                $this->error("Connection '{$connection}' should use MySQL driver!");
+                exit();
+            }
+        } else {
+            $this->error("Connection '{$connection}' does not exists!");
+            exit();
+        }
     }
 
     protected function setFilename()

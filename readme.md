@@ -2,7 +2,7 @@
 
 Backup is a Laravel package that allow the creation and restoration of database backups in an easy way.
 
-> New version 3.* replaces older versions and works with laravel 5.*
+> New version 3.* replaces older versions and works with laravel 5+
 
 [![Latest Stable Version](https://poser.pugx.org/paulvl/backup/v/stable)](https://packagist.org/packages/paulvl/backup)  [![Latest Unstable Version](https://poser.pugx.org/paulvl/backup/v/unstable)](https://packagist.org/packages/paulvl/backup) [![License](https://poser.pugx.org/paulvl/backup/license)](https://packagist.org/packages/paulvl/backup) [![Total Downloads](https://poser.pugx.org/paulvl/backup/downloads)](https://packagist.org/packages/paulvl/backup)
 
@@ -53,6 +53,11 @@ This will create an `.sql` file on your configured `local-storage.path` like `/t
 
 This will create an `.sql` file on your configured `local-storage.path` like `/this/is/my/path/custom_name.sql`
 
+#### **--connection=mysql** - Specify database connection name
+Specify the database connection name, it uses the primary connection name by default. 
+
+    php artisan backup:mysql-dump --connection=custom-connection
+    
 #### **--compress** - Enable file compression
 Enable file compression regardless if is disabled in the configuration file. This option will always overwrite `--no-compress` option
 
