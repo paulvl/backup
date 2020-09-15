@@ -141,10 +141,8 @@ class MysqlDump extends Command
 
     protected function validateAndSetConnection($connection)
     {
-        if(is_array($connectionData = config("database.connections.{$connection}")))
-        {
-            if($connectionData['driver'] == 'mysql')
-            {
+        if (is_array($connectionData = config("database.connections.{$connection}"))) {
+            if ($connectionData['driver'] == 'mysql') {
                 $this->connection = [
                     'host'     => $connectionData['host'],
                     'database' => $connectionData['database'],
