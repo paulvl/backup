@@ -225,7 +225,7 @@ class MysqlDump extends Command
 
         if ($result == 0) {
             $dumpResult = implode(PHP_EOL, $dumpResult);
-            $dumpResult = $this->isCompressionEnabled ? gzcompress($dumpResult, 9) : $dumpResult;
+            $dumpResult = $this->isCompressionEnabled ? gzencode($dumpResult, 9) : $dumpResult;
             $this->storeDumpFile($dumpResult);
         } else {
             $this->error("Database '{$database}' cannot be dumped");

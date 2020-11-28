@@ -2,6 +2,9 @@
 
 namespace Backup;
 
+use Backup\Console\Commands\MysqlDump;
+use Backup\Console\Commands\MysqlFixFile;
+use Backup\Console\Commands\MysqlRestore;
 use Illuminate\Support\ServiceProvider;
 
 class BackupServiceProvider extends ServiceProvider
@@ -13,40 +16,14 @@ class BackupServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //Publishes package config file to applications config folder
+        // Publishes package config file to applications config folder
         $this->publishes([__DIR__.'/config/backup.php' => config_path('backup.php')], 'config');
-    }
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->registerMysqlDumpCommand();
-        $this->registerMysqlRestoreCommand();
-    }
-
-    /**
-     * Register the mysql:dump command.
-     */
-    private function registerMysqlDumpCommand()
-    {
-        $this->app->singleton('command.backup-mysql.dump', function ($app) {
-            return $app['Backup\Console\Commands\MysqlDump'];
-        });
-        $this->commands('command.backup-mysql.dump');
-    }
-
-    /**
-     * Register the mysql:restore command.
-     */
-    private function registerMysqlRestoreCommand()
-    {
-        $this->app->singleton('command.backup-mysql.restore', function ($app) {
-            return $app['Backup\Console\Commands\MysqlRestore'];
-        });
-        $this->commands('command.backup-mysql.restore');
+        // Registering commands
+        $this->commands([
+            MysqlDump::class,
+            MysqlRestore::class,
+            MysqlFixFile::class
+        ]);
     }
 }

@@ -13,7 +13,7 @@ class MysqlRestore extends Command
      * @var string
      */
     protected $signature = "backup:mysql-restore
-                            {--f|filename= : Especifiy a backup file name}
+                            {--f|filename= : Restore a specific backup file name}
                             {--A|all-backup-files : Display all available backup files on disk. By default displays files for current connection's database}
                             {--C|from-cloud : Display a list of backup files from cloud disk}
                             {--L|restore-latest-backup : Use latest backup file to restore database}
@@ -282,7 +282,7 @@ class MysqlRestore extends Command
         $filename = $localFilename;
 
         if (ends_with($filename, '.gz')) {
-            $fileContent = gzuncompress(Storage::disk($this->localDisk)->get($this->getFilePath($localFilename, $this->localPath)));
+            $fileContent = gzdecode(Storage::disk($this->localDisk)->get($this->getFilePath($localFilename, $this->localPath)));
             $filename = str_replace('.sql.gz', '.tmp', $localFilename);
             Storage::disk($this->localDisk)->put($this->getFilePath($filename, $this->localPath), $fileContent);
             $isTempFilename = true;
