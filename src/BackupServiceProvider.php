@@ -23,7 +23,7 @@ class BackupServiceProvider extends ServiceProvider
         $this->commands([
             MysqlDump::class,
             MysqlRestore::class,
-            MysqlFixFile::class
+            MysqlFixFile::class,
         ]);
     }
 }
