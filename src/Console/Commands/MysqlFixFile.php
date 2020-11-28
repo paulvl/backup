@@ -12,11 +12,11 @@ class MysqlFixFile extends Command
      *
      * @var string
      */
-    protected $signature = "backup:fix-file
+    protected $signature = 'backup:fix-file
                             {--f|filename= : Fix a specific backup file name}
                             {--C|from-cloud : Display a list of backup files from cloud disk}
                             {--y|yes : Confirms file encoding mode fix}
-                            ";
+                            ';
 
     /**
      * The console command description.
@@ -166,6 +166,7 @@ class MysqlFixFile extends Command
     protected function displayOptions()
     {
         $files = $this->getFiles();
+
         return $this->choice("Which database backup file do you want to fix encoding from '{$this->getDisk()}' disk?", $files, false);
     }
 
